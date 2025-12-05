@@ -119,3 +119,18 @@ class QLearningAgent:
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
 
         return loss.item()
+
+    def save_model(self, filepath):
+        """Save model parameters"""
+        torch.save({
+            'q_net_state_dict': self.q_net.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+            'epsilon': self.epsilon
+        }, filepath)
+
+    def load_model(self, filepath):
+        """Load model parameters"""
+        checkpoint = torch.load(filepath, map_location=self.device)
+        self.q_net.load_state_dict(checkpoint['q_net_state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        self.epsilon = checkpoint['epsilon']
